@@ -1,0 +1,274 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Services & Pricing",
+  description:
+    "Photography packages and pricing for family portraits, weddings, engagements, senior portraits, headshots, and pet photography in Southern Maine.",
+};
+
+const packages = [
+  {
+    name: "Mini Session",
+    price: "Starting at $250",
+    duration: "30 minutes",
+    description: "Perfect for quick updates, holiday cards, or single-subject sessions.",
+    features: [
+      "30-minute session",
+      "1 location",
+      "15+ edited digital images",
+      "Online gallery for sharing & downloading",
+      "Print-ready high-resolution files",
+    ],
+    popular: false,
+  },
+  {
+    name: "Standard Session",
+    price: "Starting at $450",
+    duration: "1 hour",
+    description: "Our most popular package — ideal for families, couples, seniors, and headshots.",
+    features: [
+      "1-hour session",
+      "Up to 2 locations",
+      "40+ edited digital images",
+      "Online gallery for sharing & downloading",
+      "Print-ready high-resolution files",
+      "Outfit change included",
+      "Location scouting assistance",
+    ],
+    popular: true,
+  },
+  {
+    name: "Extended Session",
+    price: "Starting at $650",
+    duration: "2 hours",
+    description: "Great for larger families, multi-generational sessions, or when you want more variety.",
+    features: [
+      "2-hour session",
+      "Up to 3 locations",
+      "75+ edited digital images",
+      "Online gallery for sharing & downloading",
+      "Print-ready high-resolution files",
+      "Multiple outfit changes",
+      "Location scouting assistance",
+      "Sneak peek within 48 hours",
+    ],
+    popular: false,
+  },
+];
+
+const weddingPackages = [
+  {
+    name: "Elopement / Intimate",
+    price: "Starting at $1,500",
+    duration: "Up to 4 hours",
+    features: [
+      "Up to 4 hours of coverage",
+      "200+ edited digital images",
+      "Online gallery",
+      "Engagement session included",
+      "Timeline planning assistance",
+    ],
+  },
+  {
+    name: "Full Wedding",
+    price: "Starting at $3,000",
+    duration: "Up to 8 hours",
+    features: [
+      "Up to 8 hours of coverage",
+      "500+ edited digital images",
+      "Online gallery",
+      "Engagement session included",
+      "Second photographer option",
+      "Timeline planning assistance",
+      "Sneak peek within 48 hours",
+    ],
+  },
+  {
+    name: "Premium Wedding",
+    price: "Starting at $4,500",
+    duration: "Full day",
+    features: [
+      "Full-day coverage (10+ hours)",
+      "800+ edited digital images",
+      "Online gallery",
+      "Engagement session included",
+      "Second photographer included",
+      "Bridal session included",
+      "Timeline planning assistance",
+      "Sneak peek within 24 hours",
+      "Premium wedding album",
+    ],
+  },
+];
+
+export default function ServicesPage() {
+  return (
+    <>
+      {/* Hero */}
+      <section className="bg-warm-100 py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <p className="text-warm-500 tracking-[0.3em] uppercase text-sm mb-4">
+            Services &amp; Pricing
+          </p>
+          <h1 className="font-heading text-5xl md:text-6xl text-warm-900 mb-6">
+            Investment in Your Memories
+          </h1>
+          <p className="text-warm-600 text-lg max-w-2xl mx-auto">
+            Every session is customized to fit your needs. Below are starting
+            prices — reach out for a personalized quote.
+          </p>
+        </div>
+      </section>
+
+      {/* Portrait packages */}
+      <section className="py-24 bg-warm-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="font-heading text-4xl text-warm-900 mb-4">
+              Portrait Sessions
+            </h2>
+            <p className="text-warm-600">
+              Families &bull; Seniors &bull; Headshots &bull; Couples &bull; Pets &bull; Maternity
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            {packages.map((pkg) => (
+              <div
+                key={pkg.name}
+                className={`bg-white p-8 relative ${
+                  pkg.popular ? "ring-2 ring-warm-500 shadow-lg" : ""
+                }`}
+              >
+                {pkg.popular && (
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-warm-500 text-white text-xs tracking-widest uppercase px-4 py-1">
+                    Most Popular
+                  </div>
+                )}
+                <h3 className="font-heading text-2xl text-warm-900 mb-2">
+                  {pkg.name}
+                </h3>
+                <p className="text-warm-500 text-sm mb-2">{pkg.duration}</p>
+                <p className="font-heading text-3xl text-warm-800 mb-4">
+                  {pkg.price}
+                </p>
+                <p className="text-warm-600 text-sm mb-6">{pkg.description}</p>
+                <ul className="space-y-3 mb-8">
+                  {pkg.features.map((f) => (
+                    <li key={f} className="flex items-start gap-2 text-sm text-warm-700">
+                      <svg className="w-4 h-4 text-sage-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  href="/booking"
+                  className={`block text-center py-3 text-sm tracking-widest uppercase transition-colors ${
+                    pkg.popular
+                      ? "bg-warm-700 text-warm-50 hover:bg-warm-800"
+                      : "border border-warm-700 text-warm-700 hover:bg-warm-700 hover:text-warm-50"
+                  }`}
+                >
+                  Book This Package
+                </Link>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Wedding packages */}
+      <section className="py-24 bg-sage-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="font-heading text-4xl text-warm-900 mb-4">
+              Wedding Collections
+            </h2>
+            <p className="text-warm-600">
+              Every love story deserves to be told beautifully
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            {weddingPackages.map((pkg) => (
+              <div key={pkg.name} className="bg-white p-8">
+                <h3 className="font-heading text-2xl text-warm-900 mb-2">
+                  {pkg.name}
+                </h3>
+                <p className="text-warm-500 text-sm mb-2">{pkg.duration}</p>
+                <p className="font-heading text-3xl text-warm-800 mb-6">
+                  {pkg.price}
+                </p>
+                <ul className="space-y-3 mb-8">
+                  {pkg.features.map((f) => (
+                    <li key={f} className="flex items-start gap-2 text-sm text-warm-700">
+                      <svg className="w-4 h-4 text-sage-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  href="/contact"
+                  className="block text-center border border-warm-700 text-warm-700 py-3 text-sm tracking-widest uppercase hover:bg-warm-700 hover:text-warm-50 transition-colors"
+                >
+                  Inquire
+                </Link>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Add-ons */}
+      <section className="py-24 bg-warm-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="font-heading text-4xl text-warm-900 text-center mb-12">
+            Add-Ons &amp; Extras
+          </h2>
+          <div className="grid sm:grid-cols-2 gap-6">
+            {[
+              { item: "Additional edited images (per 10)", price: "$75" },
+              { item: "Rush delivery (48-hour turnaround)", price: "$150" },
+              { item: "Print package (assorted sizes)", price: "$200+" },
+              { item: "Photo album (custom designed)", price: "$350+" },
+              { item: "Travel fee (outside Southern Maine)", price: "$0.60/mile" },
+              { item: "Second photographer (weddings)", price: "$500" },
+            ].map((addon) => (
+              <div
+                key={addon.item}
+                className="flex items-center justify-between bg-white p-6"
+              >
+                <span className="text-warm-700 text-sm">{addon.item}</span>
+                <span className="font-heading text-warm-800 font-semibold ml-4 whitespace-nowrap">
+                  {addon.price}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-24 bg-warm-800 text-warm-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="font-heading text-4xl md:text-5xl mb-6">
+            Not Sure Which Package Is Right?
+          </h2>
+          <p className="text-warm-300 text-lg mb-10 max-w-2xl mx-auto">
+            I&apos;m happy to create a custom package that fits your needs and
+            budget. Let&apos;s chat!
+          </p>
+          <Link
+            href="/contact"
+            className="inline-block bg-warm-50 text-warm-800 px-8 py-4 text-sm tracking-widest uppercase hover:bg-warm-100 transition-colors"
+          >
+            Let&apos;s Talk
+          </Link>
+        </div>
+      </section>
+    </>
+  );
+}
