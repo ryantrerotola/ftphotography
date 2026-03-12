@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
+import { getAboutContent } from "@/sanity/queries";
+import { urlFor } from "@/sanity/image";
 
 export const metadata: Metadata = {
   title: "About",
@@ -7,7 +10,15 @@ export const metadata: Metadata = {
     "Meet Francesca Trerotola — a lifestyle photographer, mom of two, and your biggest fan behind the camera. Based in Cumberland, Maine.",
 };
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  let aboutContent = null;
+
+  try {
+    aboutContent = await getAboutContent();
+  } catch {
+    // Sanity not configured yet
+  }
+
   return (
     <>
       {/* Hero */}
@@ -30,14 +41,24 @@ export default function AboutPage() {
       <section className="py-24 bg-warm-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-16 items-center">
-            <div className="bg-warm-200 aspect-[3/4] flex items-center justify-center text-warm-400 order-2 md:order-1">
-              <div className="text-center">
-                <svg className="w-16 h-16 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                <p className="text-sm">Add your headshot here</p>
-              </div>
+            <div className="bg-warm-200 aspect-[3/4] flex items-center justify-center text-warm-400 order-2 md:order-1 relative overflow-hidden">
+              {aboutContent?.headshot ? (
+                <Image
+                  src={urlFor(aboutContent.headshot).width(700).height(933).url()}
+                  alt="Francesca Trerotola"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
+              ) : (
+                <div className="text-center">
+                  <svg className="w-16 h-16 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  <p className="text-sm">Add your headshot here</p>
+                </div>
+              )}
             </div>
             <div className="order-1 md:order-2">
               <h2 className="font-heading text-4xl text-warm-900 mb-8">

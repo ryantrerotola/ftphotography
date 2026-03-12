@@ -1,4 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
+import { getTestimonials, getAboutContent } from "@/sanity/queries";
+import { urlFor } from "@/sanity/image";
 
 const services = [
   {
@@ -39,28 +42,44 @@ const services = [
   },
 ];
 
-const testimonials = [
+const fallbackTestimonials = [
   {
+    _id: "1",
     quote:
       "Francesca made our whole family feel so comfortable — even our toddler who never sits still! The photos turned out absolutely beautiful.",
-    name: "Sarah M.",
-    type: "Family Session",
+    clientName: "Sarah M.",
+    sessionType: "Family Session",
   },
   {
+    _id: "2",
     quote:
       "She captured our engagement so naturally. We were laughing the entire time and the photos reflect that genuine joy. Couldn't recommend her more!",
-    name: "Emily & Jake",
-    type: "Engagement Session",
+    clientName: "Emily & Jake",
+    sessionType: "Engagement Session",
   },
   {
+    _id: "3",
     quote:
       "I've never felt so relaxed in front of a camera. Francesca has this gift of making you forget you're even being photographed.",
-    name: "Rachel T.",
-    type: "Senior Portraits",
+    clientName: "Rachel T.",
+    sessionType: "Senior Portraits",
   },
 ];
 
-export default function Home() {
+export default async function Home() {
+  let testimonials = fallbackTestimonials;
+  let aboutContent = null;
+
+  try {
+    const sanityTestimonials = await getTestimonials();
+    if (sanityTestimonials && sanityTestimonials.length > 0) {
+      testimonials = sanityTestimonials;
+    }
+    aboutContent = await getAboutContent();
+  } catch {
+    // Sanity not configured yet, use fallback data
+  }
+
   return (
     <>
       {/* Hero */}
@@ -101,14 +120,24 @@ export default function Home() {
       <section className="py-24 bg-warm-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-16 items-center">
-            <div className="bg-warm-200 aspect-[4/5] flex items-center justify-center text-warm-400">
-              <div className="text-center">
-                <svg className="w-16 h-16 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                <p className="text-sm">Add your photo here</p>
-              </div>
+            <div className="bg-warm-200 aspect-[4/5] flex items-center justify-center text-warm-400 relative overflow-hidden">
+              {aboutContent?.homePhoto ? (
+                <Image
+                  src={urlFor(aboutContent.homePhoto).width(800).height(1000).url()}
+                  alt="Francesca Trerotola"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
+              ) : (
+                <div className="text-center">
+                  <svg className="w-16 h-16 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  <p className="text-sm">Add your photo here</p>
+                </div>
+              )}
             </div>
             <div>
               <p className="text-warm-500 tracking-[0.3em] uppercase text-sm mb-4">
@@ -214,7 +243,7 @@ export default function Home() {
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {testimonials.map((t) => (
-              <div key={t.name} className="bg-white p-8">
+              <div key={t._id} className="bg-white p-8">
                 <svg
                   className="w-8 h-8 text-warm-300 mb-4"
                   fill="currentColor"
@@ -227,9 +256,9 @@ export default function Home() {
                 </p>
                 <div>
                   <p className="font-heading text-warm-900 font-semibold">
-                    {t.name}
+                    {t.clientName}
                   </p>
-                  <p className="text-warm-500 text-sm">{t.type}</p>
+                  <p className="text-warm-500 text-sm">{t.sessionType}</p>
                 </div>
               </div>
             ))}
