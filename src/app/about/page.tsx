@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { PortableText } from "@portabletext/react";
 import { getAboutContent } from "@/sanity/queries";
 import { urlFor } from "@/sanity/image";
 
@@ -65,24 +66,30 @@ export default async function AboutPage() {
                 My Story
               </h2>
               <div className="space-y-5 text-warm-700 leading-relaxed">
-                <p>
-                  Nothing thrills me more than capturing authentic joy, wonder,
-                  love, and laughter. As a mom of two, I know firsthand how
-                  quickly these precious moments pass — and how important it is
-                  to hold onto them.
-                </p>
-                <p>
-                  My specialty is portraits: from families and pets to proposals
-                  and weddings, headshots, senior portraits, and beyond. I create
-                  flattering and emotional lifestyle photographs that you&apos;ll
-                  treasure for a lifetime.
-                </p>
-                <p>
-                  Based in Cumberland, Maine, I primarily photograph in Southern
-                  Maine but love traveling throughout New England for sessions.
-                  Every shoot is an adventure, and I&apos;m always up for exploring
-                  new and beautiful locations.
-                </p>
+                {aboutContent?.bio && aboutContent.bio.length > 0 ? (
+                  <PortableText value={aboutContent.bio} />
+                ) : (
+                  <>
+                    <p>
+                      Nothing thrills me more than capturing authentic joy, wonder,
+                      love, and laughter. As a mom of two, I know firsthand how
+                      quickly these precious moments pass — and how important it is
+                      to hold onto them.
+                    </p>
+                    <p>
+                      My specialty is portraits: from families and pets to proposals
+                      and weddings, headshots, senior portraits, and beyond. I create
+                      flattering and emotional lifestyle photographs that you&apos;ll
+                      treasure for a lifetime.
+                    </p>
+                    <p>
+                      Based in Cumberland, Maine, I primarily photograph in Southern
+                      Maine but love traveling throughout New England for sessions.
+                      Every shoot is an adventure, and I&apos;m always up for exploring
+                      new and beautiful locations.
+                    </p>
+                  </>
+                )}
               </div>
             </div>
           </div>

@@ -61,7 +61,8 @@ export async function getAboutContent() {
     *[_type == "aboutPage"][0] {
       headshot,
       homePhoto,
-      bio
+      bio,
+      homeBio
     }
   `);
 }

@@ -20,10 +20,17 @@ export const aboutPage = defineType({
     }),
     defineField({
       name: "bio",
-      title: "Bio",
+      title: "Bio (About Page)",
       type: "array",
       of: [{ type: "block" }],
-      description: "Your bio text for the About page",
+      description: "Your bio text for the About page — the 'My Story' section",
+    }),
+    defineField({
+      name: "homeBio",
+      title: "Bio (Home Page)",
+      type: "array",
+      of: [{ type: "block" }],
+      description: "Shorter bio text for the 'Meet Francesca' section on the home page",
     }),
   ],
 });

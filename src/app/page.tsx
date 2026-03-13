@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { PortableText } from "@portabletext/react";
 import { getTestimonials, getAboutContent } from "@/sanity/queries";
 import { urlFor } from "@/sanity/image";
 
@@ -147,22 +148,28 @@ export default async function Home() {
                 A Mom, an Artist, &amp; Your Biggest Fan
               </h2>
               <div className="space-y-4 text-warm-700 leading-relaxed">
-                <p>
-                  Hi there! I&apos;m Francesca — a photographer, a mom of two, and
-                  someone who genuinely believes that the best photos come from
-                  the most real moments.
-                </p>
-                <p>
-                  My approach is simple: I find the most flattering light, help
-                  you feel natural in front of the camera, and then let the magic
-                  happen. I might put on some music, wear a funny hat, or break
-                  out a squeaky toy — whatever it takes to get those genuine
-                  smiles.
-                </p>
-                <p>
-                  I want to catch you dancing, laughing, playing, and moving.
-                  Because <em>that&apos;s</em> who you really are.
-                </p>
+                {aboutContent?.homeBio && aboutContent.homeBio.length > 0 ? (
+                  <PortableText value={aboutContent.homeBio} />
+                ) : (
+                  <>
+                    <p>
+                      Hi there! I&apos;m Francesca — a photographer, a mom of two, and
+                      someone who genuinely believes that the best photos come from
+                      the most real moments.
+                    </p>
+                    <p>
+                      My approach is simple: I find the most flattering light, help
+                      you feel natural in front of the camera, and then let the magic
+                      happen. I might put on some music, wear a funny hat, or break
+                      out a squeaky toy — whatever it takes to get those genuine
+                      smiles.
+                    </p>
+                    <p>
+                      I want to catch you dancing, laughing, playing, and moving.
+                      Because <em>that&apos;s</em> who you really are.
+                    </p>
+                  </>
+                )}
               </div>
               <Link
                 href="/about"
