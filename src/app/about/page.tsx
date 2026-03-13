@@ -11,6 +11,8 @@ export const metadata: Metadata = {
     "Meet Francesca Trerotola — a lifestyle photographer, mom of two, and your biggest fan behind the camera. Based in Cumberland, Maine.",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function AboutPage() {
   let aboutContent = null;
 
