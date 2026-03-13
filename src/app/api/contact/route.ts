@@ -19,7 +19,7 @@ const SESSION_TYPE_LABELS: Record<string, string> = {
 const REFERRAL_LABELS: Record<string, string> = {
   google: "Google Search",
   instagram: "Instagram",
-  facebook: "Facebook",
+  tiktok: "TikTok",
   referral: "Friend / Family Referral",
   "wedding-wire": "Wedding Wire",
   "the-knot": "The Knot",

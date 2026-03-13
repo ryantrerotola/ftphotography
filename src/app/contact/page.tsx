@@ -21,8 +21,7 @@ export default async function ContactPage() {
     locationDetail: pageContent?.locationDetail || "Serving Southern Maine & New England",
     email: pageContent?.email || "hello@francescatrerotolaphotography.com",
     responseTime: pageContent?.responseTime || "I typically respond within 24 hours. During peak wedding season (May\u2013October), it may take a bit longer.",
-    instagramUrl: pageContent?.instagramUrl || "https://www.instagram.com/francescatrerotolaphotography",
-    facebookUrl: pageContent?.facebookUrl || "https://www.facebook.com/francescatrerotolaphotography",
+    instagramUrl: pageContent?.instagramUrl || "https://www.instagram.com/francescatrerotola_photo",
     successTitle: pageContent?.successTitle || "Thank You!",
     successMessage: pageContent?.successMessage || "Your message has been sent. I'll be in touch within 24 hours. In the meantime, feel free to browse my portfolio!",
   };

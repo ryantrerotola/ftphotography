@@ -50,11 +50,6 @@ export const contactPage = defineType({
       type: "url",
     }),
     defineField({
-      name: "facebookUrl",
-      title: "Facebook URL",
-      type: "url",
-    }),
-    defineField({
       name: "successTitle",
       title: "Form Success Title",
       type: "string",

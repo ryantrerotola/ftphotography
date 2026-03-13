@@ -144,6 +144,18 @@ export async function getServicesPageContent() {
   `);
 }
 
+// Booking dates for calendar
+export async function getBookingDates() {
+  return client.fetch(`
+    *[_type == "bookingDate" && date >= now()] | order(date asc) {
+      _id,
+      date,
+      status,
+      note
+    }
+  `);
+}
+
 // Booking page content
 export async function getBookingPageContent() {
   return client.fetch(`
@@ -173,7 +185,6 @@ export async function getContactPageContent() {
       email,
       responseTime,
       instagramUrl,
-      facebookUrl,
       successTitle,
       successMessage
     }

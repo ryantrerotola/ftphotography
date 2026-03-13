@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getBookingPageContent } from "@/sanity/queries";
+import { getBookingPageContent, getBookingDates } from "@/sanity/queries";
+import AvailabilityCalendar from "./AvailabilityCalendar";
 
 export const metadata: Metadata = {
   title: "Book a Session",
@@ -103,9 +104,14 @@ const statusLabels: Record<string, string> = {
 export default async function BookingPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let pageContent: any = null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let bookingDates: any[] = [];
 
   try {
-    pageContent = await getBookingPageContent();
+    [pageContent, bookingDates] = await Promise.all([
+      getBookingPageContent(),
+      getBookingDates(),
+    ]);
   } catch {
     // Sanity not configured yet
   }
@@ -181,7 +187,12 @@ export default async function BookingPage() {
               {availabilityNote}
             </p>
           </div>
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
+
+          {/* Interactive calendar */}
+          <AvailabilityCalendar bookingDates={bookingDates || []} />
+
+          {/* Monthly overview */}
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 mt-16">
             {months.map((m: { month: string; status: string; note: string }) => (
               <div
                 key={m.month}

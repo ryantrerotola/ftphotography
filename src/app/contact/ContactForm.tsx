@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent } from "react";
+import { useSearchParams } from "next/navigation";
 
 interface ContactPageData {
   heroSubtitle: string;
@@ -11,12 +12,13 @@ interface ContactPageData {
   email: string;
   responseTime: string;
   instagramUrl: string;
-  facebookUrl: string;
   successTitle: string;
   successMessage: string;
 }
 
 export default function ContactForm({ content }: { content: ContactPageData }) {
+  const searchParams = useSearchParams();
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -26,6 +28,17 @@ export default function ContactForm({ content }: { content: ContactPageData }) {
     message: "",
     howDidYouHear: "",
   });
+
+  useEffect(() => {
+    const dateParam = searchParams.get("date");
+    if (dateParam) {
+      const formatted = new Date(dateParam + "T12:00:00").toLocaleDateString(
+        "en-US",
+        { weekday: "long", month: "long", day: "numeric", year: "numeric" }
+      );
+      setFormData((prev) => ({ ...prev, preferredDate: formatted }));
+    }
+  }, [searchParams]);
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
 
   async function handleSubmit(e: FormEvent) {
@@ -122,14 +135,6 @@ export default function ContactForm({ content }: { content: ContactPageData }) {
                     className="text-warm-500 hover:text-warm-700 transition-colors text-sm"
                   >
                     Instagram
-                  </a>
-                  <a
-                    href={content.facebookUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-warm-500 hover:text-warm-700 transition-colors text-sm"
-                  >
-                    Facebook
                   </a>
                 </div>
               </div>
@@ -296,7 +301,7 @@ export default function ContactForm({ content }: { content: ContactPageData }) {
                       <option value="">Select one</option>
                       <option value="google">Google Search</option>
                       <option value="instagram">Instagram</option>
-                      <option value="facebook">Facebook</option>
+                      <option value="tiktok">TikTok</option>
                       <option value="referral">Friend / Family Referral</option>
                       <option value="wedding-wire">Wedding Wire</option>
                       <option value="the-knot">The Knot</option>

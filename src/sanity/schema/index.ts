@@ -4,6 +4,7 @@ import { testimonial } from "./testimonial";
 import { aboutPage } from "./aboutPage";
 import { homePage } from "./homePage";
 import { servicesPage } from "./servicesPage";
+import { bookingDate } from "./bookingDate";
 import { bookingPage } from "./bookingPage";
 import { contactPage } from "./contactPage";
 import { portfolioPage } from "./portfolioPage";
@@ -16,6 +17,7 @@ export const schemaTypes = [
   aboutPage,
   homePage,
   servicesPage,
+  bookingDate,
   bookingPage,
   contactPage,
   portfolioPage,

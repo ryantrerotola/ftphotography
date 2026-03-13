@@ -56,7 +56,7 @@ export default async function BlogPage() {
               <p className="text-warm-400 text-sm">
                 In the meantime, follow me on{" "}
                 <a
-                  href="https://www.instagram.com/francescatrerotolaphotography"
+                  href="https://www.instagram.com/francescatrerotola_photo"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="underline hover:text-warm-600"
