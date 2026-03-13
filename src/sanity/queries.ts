@@ -55,6 +55,30 @@ export async function getTestimonials() {
   `);
 }
 
+// Lifestyle gallery images (all categories except weddings)
+export async function getLifestyleImages() {
+  return client.fetch(`
+    *[_type == "galleryImage" && category->slug.current != "weddings"] | order(order asc, date desc) {
+      _id,
+      title,
+      image,
+      "category": category->title,
+      "categorySlug": category->slug.current
+    }
+  `);
+}
+
+// Lifestyle categories (all except weddings)
+export async function getLifestyleCategories() {
+  return client.fetch(`
+    *[_type == "galleryCategory" && slug.current != "weddings"] | order(order asc) {
+      _id,
+      title,
+      "slug": slug.current
+    }
+  `);
+}
+
 // About page content
 export async function getAboutContent() {
   return client.fetch(`

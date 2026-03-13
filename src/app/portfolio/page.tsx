@@ -7,7 +7,7 @@ import { urlFor } from "@/sanity/image";
 export const metadata: Metadata = {
   title: "Portfolio",
   description:
-    "Browse the portfolio of Francesca Trerotola Photography — families, weddings, engagements, senior portraits, headshots, and pets in Southern Maine.",
+    "Browse the portfolio of Francesca Trerotola Photography — families, engagements, senior portraits, headshots, and pets in Southern Maine.",
 };
 
 const fallbackCategories = [
@@ -16,14 +16,6 @@ const fallbackCategories = [
     title: "Families",
     slug: "families",
     description: "Joyful, authentic family sessions in beautiful Maine locations.",
-    coverImage: null,
-    count: 0,
-  },
-  {
-    _id: "2",
-    title: "Weddings",
-    slug: "weddings",
-    description: "Every heartfelt moment from your most special day.",
     coverImage: null,
     count: 0,
   },
