@@ -121,36 +121,48 @@ export default async function Home() {
   return (
     <>
       {/* Hero */}
-      <section className="relative bg-warm-100 min-h-[85vh] flex items-center">
-        <div className="absolute inset-0 bg-gradient-to-br from-warm-200/50 to-sage-100/30" />
+      <section className="relative min-h-[85vh] flex items-center">
+        {pageContent?.heroImage ? (
+          <Image
+            src={urlFor(pageContent.heroImage).width(1920).height(1080).url()}
+            alt="Francesca Trerotola Photography"
+            fill
+            priority
+            className="object-cover"
+            sizes="100vw"
+          />
+        ) : (
+          <div className="absolute inset-0 bg-warm-100" />
+        )}
+        <div className="absolute inset-0 bg-warm-900/40" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
-          <p className="text-warm-600 tracking-[0.4em] uppercase text-sm mb-6">
+          <p className="text-warm-100 tracking-[0.4em] uppercase text-sm mb-6 drop-shadow-sm">
             {heroSubtitle}
           </p>
-          <h1 className="font-heading text-5xl md:text-7xl lg:text-8xl font-medium text-warm-900 mb-8 leading-tight">
+          <h1 className="font-heading text-5xl md:text-7xl lg:text-8xl font-medium text-white mb-8 leading-tight drop-shadow-md">
             {heroTitle.includes("&") ? (
               <>
                 {heroTitle.split("&")[0].trim()}
                 <br />
-                <span className="italic text-warm-700">&amp; {heroTitle.split("&").slice(1).join("&").trim()}</span>
+                <span className="italic text-warm-200">&amp; {heroTitle.split("&").slice(1).join("&").trim()}</span>
               </>
             ) : (
               heroTitle
             )}
           </h1>
-          <p className="text-lg md:text-xl text-warm-700 max-w-2xl mx-auto mb-10 font-light leading-relaxed">
+          <p className="text-lg md:text-xl text-warm-100 max-w-2xl mx-auto mb-10 font-light leading-relaxed drop-shadow-sm">
             {heroDescription}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               href="/booking"
-              className="bg-warm-700 text-warm-50 px-8 py-4 text-sm tracking-widest uppercase hover:bg-warm-800 transition-colors w-full sm:w-auto"
+              className="bg-warm-50 text-warm-800 px-8 py-4 text-sm tracking-widest uppercase hover:bg-white transition-colors w-full sm:w-auto"
             >
               Book Your Session
             </Link>
             <Link
               href="/portfolio"
-              className="border border-warm-700 text-warm-700 px-8 py-4 text-sm tracking-widest uppercase hover:bg-warm-700 hover:text-warm-50 transition-colors w-full sm:w-auto"
+              className="border border-warm-100 text-warm-50 px-8 py-4 text-sm tracking-widest uppercase hover:bg-warm-50/20 transition-colors w-full sm:w-auto"
             >
               View Portfolio
             </Link>

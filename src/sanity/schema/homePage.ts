@@ -6,6 +6,13 @@ export const homePage = defineType({
   type: "document",
   fields: [
     defineField({
+      name: "heroImage",
+      title: "Hero Background Image",
+      type: "image",
+      options: { hotspot: true },
+      description: "Full-screen background image for the home page hero section",
+    }),
+    defineField({
       name: "heroSubtitle",
       title: "Hero Subtitle",
       type: "string",

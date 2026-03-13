@@ -106,6 +106,7 @@ export async function getAboutContent() {
 export async function getHomePageContent() {
   return client.fetch(`
     *[_type == "homePage"][0] {
+      heroImage,
       heroSubtitle,
       heroTitle,
       heroDescription,
