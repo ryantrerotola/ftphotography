@@ -29,39 +29,6 @@ const fallbackSteps = [
   },
 ];
 
-const fallbackMonths = [
-  {
-    month: "April 2026",
-    status: "limited" as const,
-    note: "A few weekend slots remaining",
-  },
-  {
-    month: "May 2026",
-    status: "limited" as const,
-    note: "Peak season — booking fast",
-  },
-  {
-    month: "June 2026",
-    status: "available" as const,
-    note: "Weekday and weekend availability",
-  },
-  {
-    month: "July 2026",
-    status: "available" as const,
-    note: "Summer sessions available",
-  },
-  {
-    month: "August 2026",
-    status: "available" as const,
-    note: "Great for senior portraits",
-  },
-  {
-    month: "September 2026",
-    status: "available" as const,
-    note: "Beautiful fall light begins",
-  },
-];
-
 const fallbackFaqs = [
   {
     question: "How far in advance should I book?",
@@ -89,18 +56,6 @@ const fallbackFaqs = [
   },
 ];
 
-const statusColors: Record<string, string> = {
-  available: "bg-sage-100 text-sage-700 border-sage-300",
-  limited: "bg-warm-100 text-warm-700 border-warm-300",
-  booked: "bg-warm-200 text-warm-500 border-warm-300",
-};
-
-const statusLabels: Record<string, string> = {
-  available: "Available",
-  limited: "Limited",
-  booked: "Fully Booked",
-};
-
 export default async function BookingPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let pageContent: any = null;
@@ -110,11 +65,14 @@ export default async function BookingPage() {
   let exceptions: any[] = [];
 
   try {
-    [pageContent, schedule, exceptions] = await Promise.all([
+    const results = await Promise.all([
       getBookingPageContent(),
       getBookingSchedule(),
       getBookingExceptions(),
     ]);
+    pageContent = results[0];
+    schedule = results[1];
+    exceptions = results[2] || [];
   } catch {
     // Sanity not configured yet
   }
@@ -133,10 +91,6 @@ export default async function BookingPage() {
   const steps = pageContent?.steps && pageContent.steps.length > 0
     ? pageContent.steps
     : fallbackSteps;
-
-  const months = pageContent?.months && pageContent.months.length > 0
-    ? pageContent.months
-    : fallbackMonths;
 
   const faqs = pageContent?.faqs && pageContent.faqs.length > 0
     ? pageContent.faqs
@@ -203,21 +157,6 @@ export default async function BookingPage() {
             scheduleNote={schedule?.note}
           />
 
-          {/* Monthly overview */}
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 mt-16">
-            {months.map((m: { month: string; status: string; note: string }) => (
-              <div
-                key={m.month}
-                className={`border p-6 ${statusColors[m.status] || statusColors.available}`}
-              >
-                <h3 className="font-heading text-lg mb-1">{m.month}</h3>
-                <span className="text-xs tracking-widest uppercase font-semibold">
-                  {statusLabels[m.status] || m.status}
-                </span>
-                <p className="text-sm mt-2 opacity-80">{m.note}</p>
-              </div>
-            ))}
-          </div>
           <p className="text-center text-warm-500 text-sm mt-8">
             {availabilityFootnote}{" "}
             <Link href="/contact" className="underline">

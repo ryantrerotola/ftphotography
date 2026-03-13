@@ -198,7 +198,7 @@ export default async function ServicesPage() {
                   <p className="text-warm-600 text-sm mb-6">{pkg.description}</p>
                 )}
                 <ul className="space-y-3 mb-8">
-                  {pkg.features.map((f: string) => (
+                  {(pkg.features || []).map((f: string) => (
                     <li key={f} className="flex items-start gap-2 text-sm text-warm-700">
                       <svg className="w-4 h-4 text-sage-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -245,7 +245,7 @@ export default async function ServicesPage() {
                   {pkg.price}
                 </p>
                 <ul className="space-y-3 mb-8">
-                  {pkg.features.map((f: string) => (
+                  {(pkg.features || []).map((f: string) => (
                     <li key={f} className="flex items-start gap-2 text-sm text-warm-700">
                       <svg className="w-4 h-4 text-sage-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
