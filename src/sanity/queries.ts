@@ -144,13 +144,24 @@ export async function getServicesPageContent() {
   `);
 }
 
-// Booking dates for calendar
-export async function getBookingDates() {
+// Booking schedule (weekly pattern)
+export async function getBookingSchedule() {
   return client.fetch(`
-    *[_type == "bookingDate" && date >= now()] | order(date asc) {
+    *[_type == "bookingSchedule"][0] {
+      availableDays,
+      weeksOut,
+      note
+    }
+  `);
+}
+
+// Booking exceptions (booked dates, vacations, extra availability)
+export async function getBookingExceptions() {
+  return client.fetch(`
+    *[_type == "bookingException" && date >= now()] | order(date asc) {
       _id,
       date,
-      status,
+      type,
       note
     }
   `);

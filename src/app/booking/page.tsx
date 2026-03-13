@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getBookingPageContent, getBookingDates } from "@/sanity/queries";
+import { getBookingPageContent, getBookingSchedule, getBookingExceptions } from "@/sanity/queries";
 import AvailabilityCalendar from "./AvailabilityCalendar";
 
 export const metadata: Metadata = {
@@ -105,16 +105,23 @@ export default async function BookingPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let pageContent: any = null;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let bookingDates: any[] = [];
+  let schedule: any = null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let exceptions: any[] = [];
 
   try {
-    [pageContent, bookingDates] = await Promise.all([
+    [pageContent, schedule, exceptions] = await Promise.all([
       getBookingPageContent(),
-      getBookingDates(),
+      getBookingSchedule(),
+      getBookingExceptions(),
     ]);
   } catch {
     // Sanity not configured yet
   }
+
+  // Default: available Saturdays and Sundays, 12 weeks out
+  const availableDays = (schedule?.availableDays || ["0", "6"]).map(Number);
+  const weeksOut = schedule?.weeksOut || 12;
 
   const heroSubtitle = pageContent?.heroSubtitle || "Booking";
   const heroTitle = pageContent?.heroTitle || "Book Your Session";
@@ -189,7 +196,12 @@ export default async function BookingPage() {
           </div>
 
           {/* Interactive calendar */}
-          <AvailabilityCalendar bookingDates={bookingDates || []} />
+          <AvailabilityCalendar
+            availableDays={availableDays}
+            weeksOut={weeksOut}
+            exceptions={exceptions || []}
+            scheduleNote={schedule?.note}
+          />
 
           {/* Monthly overview */}
           <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 mt-16">

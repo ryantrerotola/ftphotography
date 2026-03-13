@@ -3,11 +3,18 @@
 import { useState } from "react";
 import Link from "next/link";
 
-interface BookingDate {
+interface BookingException {
   _id: string;
   date: string;
-  status: "available" | "booked" | "hold";
+  type: "booked" | "unavailable" | "hold" | "available";
   note?: string;
+}
+
+interface Props {
+  availableDays: number[]; // 0=Sun, 1=Mon, ..., 6=Sat
+  weeksOut: number;
+  exceptions: BookingException[];
+  scheduleNote?: string;
 }
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -32,19 +39,39 @@ function formatMonthYear(year: number, month: number) {
 }
 
 export default function AvailabilityCalendar({
-  bookingDates,
-}: {
-  bookingDates: BookingDate[];
-}) {
+  availableDays,
+  weeksOut,
+  exceptions,
+  scheduleNote,
+}: Props) {
   const today = new Date();
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
-  const [selectedDate, setSelectedDate] = useState<BookingDate | null>(null);
+  const [selectedDate, setSelectedDate] = useState<{
+    date: string;
+    note?: string;
+  } | null>(null);
 
-  const dateMap = new Map<string, BookingDate>();
-  for (const bd of bookingDates) {
-    dateMap.set(bd.date, bd);
+  // Build exception lookup
+  const exceptionMap = new Map<string, BookingException>();
+  for (const ex of exceptions) {
+    exceptionMap.set(ex.date, ex);
   }
+
+  // Calculate the furthest date we show availability
+  const maxDate = new Date(today);
+  maxDate.setDate(maxDate.getDate() + weeksOut * 7);
+  const maxDateKey = formatDateKey(
+    maxDate.getFullYear(),
+    maxDate.getMonth(),
+    maxDate.getDate()
+  );
+
+  const todayKey = formatDateKey(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate()
+  );
 
   const daysInMonth = getDaysInMonth(currentYear, currentMonth);
   const firstDay = getFirstDayOfMonth(currentYear, currentMonth);
@@ -69,19 +96,45 @@ export default function AvailabilityCalendar({
     setSelectedDate(null);
   }
 
-  const todayKey = formatDateKey(
-    today.getFullYear(),
-    today.getMonth(),
-    today.getDate()
-  );
-
-  // Don't allow navigating before current month
   const canGoPrev =
     currentYear > today.getFullYear() ||
     (currentYear === today.getFullYear() && currentMonth > today.getMonth());
 
+  // Don't allow navigating past the max date's month
+  const maxMonth = maxDate.getMonth();
+  const maxYear = maxDate.getFullYear();
+  const canGoNext =
+    currentYear < maxYear ||
+    (currentYear === maxYear && currentMonth < maxMonth);
+
+  function getDateStatus(key: string, dayOfWeek: number) {
+    const isPast = key < todayKey;
+    const isBeyondRange = key > maxDateKey;
+
+    if (isPast || isBeyondRange) return "inactive";
+
+    const exception = exceptionMap.get(key);
+    if (exception) {
+      if (exception.type === "booked") return "booked";
+      if (exception.type === "unavailable") return "unavailable";
+      if (exception.type === "hold") return "hold";
+      if (exception.type === "available") return "available"; // extra day
+    }
+
+    // Fall back to weekly schedule
+    if (availableDays.includes(dayOfWeek)) return "available";
+
+    return "inactive";
+  }
+
   return (
     <div className="max-w-lg mx-auto">
+      {scheduleNote && (
+        <p className="text-center text-warm-600 text-sm mb-6 italic">
+          {scheduleNote}
+        </p>
+      )}
+
       {/* Month navigation */}
       <div className="flex items-center justify-between mb-6">
         <button
@@ -99,7 +152,8 @@ export default function AvailabilityCalendar({
         </h3>
         <button
           onClick={nextMonth}
-          className="p-2 text-warm-600 hover:text-warm-900 transition-colors"
+          disabled={!canGoNext}
+          className="p-2 text-warm-600 hover:text-warm-900 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
           aria-label="Next month"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -122,66 +176,70 @@ export default function AvailabilityCalendar({
 
       {/* Calendar grid */}
       <div className="grid grid-cols-7 gap-1">
-        {/* Empty cells for days before the 1st */}
         {Array.from({ length: firstDay }).map((_, i) => (
           <div key={`empty-${i}`} className="aspect-square" />
         ))}
 
-        {/* Day cells */}
         {Array.from({ length: daysInMonth }).map((_, i) => {
           const day = i + 1;
           const key = formatDateKey(currentYear, currentMonth, day);
-          const booking = dateMap.get(key);
-          const isPast = key < todayKey;
-          const isToday = key === todayKey;
-          const isAvailable = booking?.status === "available";
-          const isBooked = booking?.status === "booked";
-          const isHold = booking?.status === "hold";
+          const dayOfWeek = new Date(currentYear, currentMonth, day).getDay();
+          const status = getDateStatus(key, dayOfWeek);
+          const exception = exceptionMap.get(key);
           const isSelected = selectedDate?.date === key;
+          const isToday = key === todayKey;
 
           let cellClass =
             "aspect-square flex items-center justify-center text-sm relative transition-all ";
 
-          if (isPast) {
-            cellClass += "text-warm-300 cursor-default";
-          } else if (isAvailable) {
-            cellClass +=
-              "bg-sage-100 text-sage-800 cursor-pointer hover:bg-sage-200 font-semibold";
-            if (isSelected) cellClass += " ring-2 ring-sage-500";
-          } else if (isBooked) {
-            cellClass += "bg-warm-200 text-warm-400 line-through cursor-default";
-          } else if (isHold) {
-            cellClass += "bg-warm-100 text-warm-500 cursor-default";
-          } else {
-            cellClass += "text-warm-600 cursor-default";
+          switch (status) {
+            case "available":
+              cellClass +=
+                "bg-sage-100 text-sage-800 cursor-pointer hover:bg-sage-200 font-semibold";
+              if (isSelected) cellClass += " ring-2 ring-sage-500";
+              break;
+            case "booked":
+              cellClass +=
+                "bg-warm-200 text-warm-400 line-through cursor-default";
+              break;
+            case "hold":
+              cellClass += "bg-warm-100 text-warm-500 cursor-default";
+              break;
+            case "unavailable":
+              cellClass += "text-warm-300 cursor-default";
+              break;
+            default:
+              cellClass += "text-warm-400 cursor-default";
           }
 
-          if (isToday) {
-            cellClass += " font-bold";
-          }
+          if (isToday) cellClass += " font-bold";
 
           return (
             <button
               key={key}
               onClick={() => {
-                if (isAvailable && !isPast) {
-                  setSelectedDate(isSelected ? null : booking);
+                if (status === "available") {
+                  setSelectedDate(
+                    isSelected
+                      ? null
+                      : { date: key, note: exception?.note }
+                  );
                 }
               }}
-              disabled={!isAvailable || isPast}
+              disabled={status !== "available"}
               className={cellClass}
               title={
-                isAvailable
-                  ? `Available${booking.note ? ` — ${booking.note}` : ""}`
-                  : isBooked
+                status === "available"
+                  ? `Available${exception?.note ? ` — ${exception.note}` : ""}`
+                  : status === "booked"
                     ? "Booked"
-                    : isHold
+                    : status === "hold"
                       ? "On hold"
                       : undefined
               }
             >
               {day}
-              {isAvailable && (
+              {status === "available" && (
                 <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 bg-sage-500 rounded-full" />
               )}
             </button>
