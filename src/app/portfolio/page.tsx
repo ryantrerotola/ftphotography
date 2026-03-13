@@ -20,23 +20,15 @@ const fallbackCategories = [
     count: 0,
   },
   {
-    _id: "3",
+    _id: "2",
     title: "Engagements & Proposals",
-    slug: "engagements",
+    slug: "engagements-proposals",
     description: "Celebrating love stories in their most exciting chapter.",
     coverImage: null,
     count: 0,
   },
   {
-    _id: "4",
-    title: "Senior Portraits",
-    slug: "seniors",
-    description: "Milestone portraits full of personality and style.",
-    coverImage: null,
-    count: 0,
-  },
-  {
-    _id: "5",
+    _id: "3",
     title: "Headshots",
     slug: "headshots",
     description: "Professional, approachable portraits for your brand.",
@@ -44,10 +36,18 @@ const fallbackCategories = [
     count: 0,
   },
   {
-    _id: "6",
+    _id: "4",
     title: "Pets",
     slug: "pets",
     description: "Because your furry family members deserve the spotlight too.",
+    coverImage: null,
+    count: 0,
+  },
+  {
+    _id: "5",
+    title: "Lifestyle",
+    slug: "lifestyle",
+    description: "Everyday moments captured with warmth and authenticity.",
     coverImage: null,
     count: 0,
   },
@@ -102,7 +102,7 @@ export default async function PortfolioPage() {
             {categories.map((cat) => (
               <Link
                 key={cat._id}
-                href={`/lifestyle?category=${cat.slug}`}
+                href={`/portfolio/${cat.slug}`}
                 className="group relative bg-warm-200 aspect-[4/5] flex items-end overflow-hidden cursor-pointer hover:shadow-xl transition-shadow"
               >
                 {cat.coverImage ? (
