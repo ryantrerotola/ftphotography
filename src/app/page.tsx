@@ -1,10 +1,10 @@
 import Link from "next/link";
 import Image from "next/image";
 import { PortableText } from "@portabletext/react";
-import { getTestimonials, getAboutContent } from "@/sanity/queries";
+import { getTestimonials, getAboutContent, getHomePageContent } from "@/sanity/queries";
 import { urlFor } from "@/sanity/image";
 
-const services = [
+const fallbackServices = [
   {
     title: "Family Portraits",
     description:
@@ -43,6 +43,17 @@ const services = [
   },
 ];
 
+const serviceIcons: Record<string, string> = {
+  "Family Portraits": "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z",
+  "Weddings": "M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z",
+  "Engagements & Proposals": "M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z",
+  "Senior Portraits": "M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z",
+  "Headshots": "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z",
+  "Pet Photography": "M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5",
+};
+
+const defaultIcon = "M13 10V3L4 14h7v7l9-11h-7z";
+
 const fallbackTestimonials = [
   {
     _id: "1",
@@ -72,6 +83,8 @@ export const dynamic = "force-dynamic";
 export default async function Home() {
   let testimonials = fallbackTestimonials;
   let aboutContent = null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let pageContent: any = null;
 
   try {
     const sanityTestimonials = await getTestimonials();
@@ -79,9 +92,31 @@ export default async function Home() {
       testimonials = sanityTestimonials;
     }
     aboutContent = await getAboutContent();
+    pageContent = await getHomePageContent();
   } catch {
     // Sanity not configured yet, use fallback data
   }
+
+  const heroSubtitle = pageContent?.heroSubtitle || "Southern Maine Portrait & Lifestyle Photographer";
+  const heroTitle = pageContent?.heroTitle || "Capturing Authentic Joy & Love";
+  const heroDescription = pageContent?.heroDescription || "Nothing thrills me more than capturing authentic joy, wonder, love, and laughter. Based in Cumberland, Maine — I create flattering and emotional lifestyle photographs throughout New England.";
+  const aboutSubtitle = pageContent?.aboutSubtitle || "Meet Francesca";
+  const aboutTitle = pageContent?.aboutTitle || "A Mom, an Artist, & Your Biggest Fan";
+  const servicesSubtitle = pageContent?.servicesSubtitle || "What I Offer";
+  const servicesTitle = pageContent?.servicesTitle || "Photography Services";
+  const servicesDescription = pageContent?.servicesDescription || "Every session is tailored to you. Whether it's a wedding, a family reunion, or a headshot for your business — I bring the same warmth and dedication to every shoot.";
+  const testimonialsSubtitle = pageContent?.testimonialsSubtitle || "Kind Words";
+  const testimonialsTitle = pageContent?.testimonialsTitle || "What Clients Are Saying";
+  const ctaTitle = pageContent?.ctaTitle || "Ready to Create Something Beautiful?";
+  const ctaDescription = pageContent?.ctaDescription || "Let's capture the moments that matter most to you. Whether it's your wedding day, a family milestone, or simply celebrating who you are — I'd love to be part of it.";
+
+  const services = pageContent?.services && pageContent.services.length > 0
+    ? pageContent.services.map((s: { title: string; description: string }) => ({
+        title: s.title,
+        description: s.description,
+        icon: serviceIcons[s.title] || defaultIcon,
+      }))
+    : fallbackServices;
 
   return (
     <>
@@ -90,17 +125,21 @@ export default async function Home() {
         <div className="absolute inset-0 bg-gradient-to-br from-warm-200/50 to-sage-100/30" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
           <p className="text-warm-600 tracking-[0.4em] uppercase text-sm mb-6">
-            Southern Maine Portrait &amp; Lifestyle Photographer
+            {heroSubtitle}
           </p>
           <h1 className="font-heading text-5xl md:text-7xl lg:text-8xl font-medium text-warm-900 mb-8 leading-tight">
-            Capturing Authentic
-            <br />
-            <span className="italic text-warm-700">Joy &amp; Love</span>
+            {heroTitle.includes("&") ? (
+              <>
+                {heroTitle.split("&")[0].trim()}
+                <br />
+                <span className="italic text-warm-700">&amp; {heroTitle.split("&").slice(1).join("&").trim()}</span>
+              </>
+            ) : (
+              heroTitle
+            )}
           </h1>
           <p className="text-lg md:text-xl text-warm-700 max-w-2xl mx-auto mb-10 font-light leading-relaxed">
-            Nothing thrills me more than capturing authentic joy, wonder, love,
-            and laughter. Based in Cumberland, Maine — I create flattering and
-            emotional lifestyle photographs throughout New England.
+            {heroDescription}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
@@ -144,10 +183,10 @@ export default async function Home() {
             </div>
             <div>
               <p className="text-warm-500 tracking-[0.3em] uppercase text-sm mb-4">
-                Meet Francesca
+                {aboutSubtitle}
               </p>
               <h2 className="font-heading text-4xl md:text-5xl text-warm-900 mb-6">
-                A Mom, an Artist, &amp; Your Biggest Fan
+                {aboutTitle}
               </h2>
               <div className="space-y-4 text-warm-700 leading-relaxed">
                 {aboutContent?.homeBio && aboutContent.homeBio.length > 0 ? (
@@ -189,19 +228,17 @@ export default async function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <p className="text-sage-600 tracking-[0.3em] uppercase text-sm mb-4">
-              What I Offer
+              {servicesSubtitle}
             </p>
             <h2 className="font-heading text-4xl md:text-5xl text-warm-900 mb-6">
-              Photography Services
+              {servicesTitle}
             </h2>
             <p className="text-warm-600 max-w-2xl mx-auto">
-              Every session is tailored to you. Whether it&apos;s a wedding, a family
-              reunion, or a headshot for your business — I bring the same warmth
-              and dedication to every shoot.
+              {servicesDescription}
             </p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {services.map((service) => (
+            {services.map((service: { title: string; description: string; icon: string }) => (
               <div
                 key={service.title}
                 className="bg-white p-8 hover:shadow-lg transition-shadow group"
@@ -244,10 +281,10 @@ export default async function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <p className="text-warm-500 tracking-[0.3em] uppercase text-sm mb-4">
-              Kind Words
+              {testimonialsSubtitle}
             </p>
             <h2 className="font-heading text-4xl md:text-5xl text-warm-900">
-              What Clients Are Saying
+              {testimonialsTitle}
             </h2>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
@@ -279,12 +316,10 @@ export default async function Home() {
       <section className="py-24 bg-warm-800 text-warm-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="font-heading text-4xl md:text-5xl mb-6">
-            Ready to Create Something Beautiful?
+            {ctaTitle}
           </h2>
           <p className="text-warm-300 text-lg mb-10 max-w-2xl mx-auto">
-            Let&apos;s capture the moments that matter most to you. Whether it&apos;s
-            your wedding day, a family milestone, or simply celebrating who you
-            are — I&apos;d love to be part of it.
+            {ctaDescription}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link

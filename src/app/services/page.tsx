@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { getServicesPageContent } from "@/sanity/queries";
 
 export const metadata: Metadata = {
   title: "Services & Pricing",
@@ -7,7 +8,9 @@ export const metadata: Metadata = {
     "Photography packages and pricing for family portraits, weddings, engagements, senior portraits, headshots, and pet photography in Southern Maine.",
 };
 
-const packages = [
+export const dynamic = "force-dynamic";
+
+const fallbackPackages = [
   {
     name: "Mini Session",
     price: "Starting at $250",
@@ -57,7 +60,7 @@ const packages = [
   },
 ];
 
-const weddingPackages = [
+const fallbackWeddingPackages = [
   {
     name: "Elopement / Intimate",
     price: "Starting at $1,500",
@@ -102,21 +105,60 @@ const weddingPackages = [
   },
 ];
 
-export default function ServicesPage() {
+const fallbackAddOns = [
+  { name: "Additional edited images (per 10)", price: "$75" },
+  { name: "Rush delivery (48-hour turnaround)", price: "$150" },
+  { name: "Print package (assorted sizes)", price: "$200+" },
+  { name: "Photo album (custom designed)", price: "$350+" },
+  { name: "Travel fee (outside Southern Maine)", price: "$0.60/mile" },
+  { name: "Second photographer (weddings)", price: "$500" },
+];
+
+export default async function ServicesPage() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let pageContent: any = null;
+
+  try {
+    pageContent = await getServicesPageContent();
+  } catch {
+    // Sanity not configured yet
+  }
+
+  const heroSubtitle = pageContent?.heroSubtitle || "Services & Pricing";
+  const heroTitle = pageContent?.heroTitle || "Investment in Your Memories";
+  const heroDescription = pageContent?.heroDescription || "Every session is customized to fit your needs. Below are starting prices — reach out for a personalized quote.";
+  const portraitSectionTitle = pageContent?.portraitSectionTitle || "Portrait Sessions";
+  const portraitSectionSubtitle = pageContent?.portraitSectionSubtitle || "Families \u2022 Seniors \u2022 Headshots \u2022 Couples \u2022 Pets \u2022 Maternity";
+  const weddingSectionTitle = pageContent?.weddingSectionTitle || "Wedding Collections";
+  const weddingSectionSubtitle = pageContent?.weddingSectionSubtitle || "Every love story deserves to be told beautifully";
+  const ctaTitle = pageContent?.ctaTitle || "Not Sure Which Package Is Right?";
+  const ctaDescription = pageContent?.ctaDescription || "I'm happy to create a custom package that fits your needs and budget. Let's chat!";
+
+  const packages = pageContent?.portraitPackages && pageContent.portraitPackages.length > 0
+    ? pageContent.portraitPackages
+    : fallbackPackages;
+
+  const weddingPackages = pageContent?.weddingPackages && pageContent.weddingPackages.length > 0
+    ? pageContent.weddingPackages
+    : fallbackWeddingPackages;
+
+  const addOns = pageContent?.addOns && pageContent.addOns.length > 0
+    ? pageContent.addOns
+    : fallbackAddOns;
+
   return (
     <>
       {/* Hero */}
       <section className="bg-warm-100 py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-warm-500 tracking-[0.3em] uppercase text-sm mb-4">
-            Services &amp; Pricing
+            {heroSubtitle}
           </p>
           <h1 className="font-heading text-5xl md:text-6xl text-warm-900 mb-6">
-            Investment in Your Memories
+            {heroTitle}
           </h1>
           <p className="text-warm-600 text-lg max-w-2xl mx-auto">
-            Every session is customized to fit your needs. Below are starting
-            prices — reach out for a personalized quote.
+            {heroDescription}
           </p>
         </div>
       </section>
@@ -126,14 +168,14 @@ export default function ServicesPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="font-heading text-4xl text-warm-900 mb-4">
-              Portrait Sessions
+              {portraitSectionTitle}
             </h2>
             <p className="text-warm-600">
-              Families &bull; Seniors &bull; Headshots &bull; Couples &bull; Pets &bull; Maternity
+              {portraitSectionSubtitle}
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
-            {packages.map((pkg) => (
+            {packages.map((pkg: { name: string; price: string; duration: string; description?: string; features: string[]; popular?: boolean }) => (
               <div
                 key={pkg.name}
                 className={`bg-white p-8 relative ${
@@ -152,9 +194,11 @@ export default function ServicesPage() {
                 <p className="font-heading text-3xl text-warm-800 mb-4">
                   {pkg.price}
                 </p>
-                <p className="text-warm-600 text-sm mb-6">{pkg.description}</p>
+                {pkg.description && (
+                  <p className="text-warm-600 text-sm mb-6">{pkg.description}</p>
+                )}
                 <ul className="space-y-3 mb-8">
-                  {pkg.features.map((f) => (
+                  {pkg.features.map((f: string) => (
                     <li key={f} className="flex items-start gap-2 text-sm text-warm-700">
                       <svg className="w-4 h-4 text-sage-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -184,14 +228,14 @@ export default function ServicesPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="font-heading text-4xl text-warm-900 mb-4">
-              Wedding Collections
+              {weddingSectionTitle}
             </h2>
             <p className="text-warm-600">
-              Every love story deserves to be told beautifully
+              {weddingSectionSubtitle}
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
-            {weddingPackages.map((pkg) => (
+            {weddingPackages.map((pkg: { name: string; price: string; duration: string; features: string[] }) => (
               <div key={pkg.name} className="bg-white p-8">
                 <h3 className="font-heading text-2xl text-warm-900 mb-2">
                   {pkg.name}
@@ -201,7 +245,7 @@ export default function ServicesPage() {
                   {pkg.price}
                 </p>
                 <ul className="space-y-3 mb-8">
-                  {pkg.features.map((f) => (
+                  {pkg.features.map((f: string) => (
                     <li key={f} className="flex items-start gap-2 text-sm text-warm-700">
                       <svg className="w-4 h-4 text-sage-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -229,19 +273,12 @@ export default function ServicesPage() {
             Add-Ons &amp; Extras
           </h2>
           <div className="grid sm:grid-cols-2 gap-6">
-            {[
-              { item: "Additional edited images (per 10)", price: "$75" },
-              { item: "Rush delivery (48-hour turnaround)", price: "$150" },
-              { item: "Print package (assorted sizes)", price: "$200+" },
-              { item: "Photo album (custom designed)", price: "$350+" },
-              { item: "Travel fee (outside Southern Maine)", price: "$0.60/mile" },
-              { item: "Second photographer (weddings)", price: "$500" },
-            ].map((addon) => (
+            {addOns.map((addon: { name: string; price: string }) => (
               <div
-                key={addon.item}
+                key={addon.name}
                 className="flex items-center justify-between bg-white p-6"
               >
-                <span className="text-warm-700 text-sm">{addon.item}</span>
+                <span className="text-warm-700 text-sm">{addon.name}</span>
                 <span className="font-heading text-warm-800 font-semibold ml-4 whitespace-nowrap">
                   {addon.price}
                 </span>
@@ -255,11 +292,10 @@ export default function ServicesPage() {
       <section className="py-24 bg-warm-800 text-warm-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="font-heading text-4xl md:text-5xl mb-6">
-            Not Sure Which Package Is Right?
+            {ctaTitle}
           </h2>
           <p className="text-warm-300 text-lg mb-10 max-w-2xl mx-auto">
-            I&apos;m happy to create a custom package that fits your needs and
-            budget. Let&apos;s chat!
+            {ctaDescription}
           </p>
           <Link
             href="/contact"

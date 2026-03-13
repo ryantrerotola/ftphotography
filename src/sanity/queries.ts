@@ -86,7 +86,123 @@ export async function getAboutContent() {
       headshot,
       homePhoto,
       bio,
-      homeBio
+      homeBio,
+      heroSubtitle,
+      heroTitle,
+      heroDescription,
+      storyTitle,
+      approachSubtitle,
+      approachTitle,
+      approachSteps[] { title, description },
+      funFactsTitle,
+      funFacts,
+      ctaTitle,
+      ctaDescription
+    }
+  `);
+}
+
+// Home page content
+export async function getHomePageContent() {
+  return client.fetch(`
+    *[_type == "homePage"][0] {
+      heroSubtitle,
+      heroTitle,
+      heroDescription,
+      aboutSubtitle,
+      aboutTitle,
+      servicesSubtitle,
+      servicesTitle,
+      servicesDescription,
+      services[] { title, description },
+      testimonialsSubtitle,
+      testimonialsTitle,
+      ctaTitle,
+      ctaDescription
+    }
+  `);
+}
+
+// Services page content
+export async function getServicesPageContent() {
+  return client.fetch(`
+    *[_type == "servicesPage"][0] {
+      heroSubtitle,
+      heroTitle,
+      heroDescription,
+      portraitSectionTitle,
+      portraitSectionSubtitle,
+      portraitPackages[] { name, price, duration, description, popular, features },
+      weddingSectionTitle,
+      weddingSectionSubtitle,
+      weddingPackages[] { name, price, duration, features },
+      addOns[] { name, price },
+      ctaTitle,
+      ctaDescription
+    }
+  `);
+}
+
+// Booking page content
+export async function getBookingPageContent() {
+  return client.fetch(`
+    *[_type == "bookingPage"][0] {
+      heroSubtitle,
+      heroTitle,
+      heroDescription,
+      steps[] { title, description },
+      availabilityTitle,
+      availabilityNote,
+      months[] { month, status, note },
+      availabilityFootnote,
+      faqs[] { question, answer }
+    }
+  `);
+}
+
+// Contact page content
+export async function getContactPageContent() {
+  return client.fetch(`
+    *[_type == "contactPage"][0] {
+      heroSubtitle,
+      heroTitle,
+      heroDescription,
+      location,
+      locationDetail,
+      email,
+      responseTime,
+      instagramUrl,
+      facebookUrl,
+      successTitle,
+      successMessage
+    }
+  `);
+}
+
+// Portfolio page content
+export async function getPortfolioPageContent() {
+  return client.fetch(`
+    *[_type == "portfolioPage"][0] {
+      heroSubtitle,
+      heroTitle,
+      heroDescription,
+      featuredSubtitle,
+      featuredTitle,
+      ctaTitle,
+      ctaDescription
+    }
+  `);
+}
+
+// Blog page content
+export async function getBlogPageContent() {
+  return client.fetch(`
+    *[_type == "blogPage"][0] {
+      heroSubtitle,
+      heroTitle,
+      heroDescription,
+      newsletterTitle,
+      newsletterDescription
     }
   `);
 }

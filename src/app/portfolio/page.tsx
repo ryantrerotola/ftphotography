@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { getGalleryCategories, getFeaturedImages } from "@/sanity/queries";
+import { getGalleryCategories, getFeaturedImages, getPortfolioPageContent } from "@/sanity/queries";
 import { urlFor } from "@/sanity/image";
 
 export const metadata: Metadata = {
@@ -63,6 +63,8 @@ export default async function PortfolioPage() {
     image: { asset: { _ref: string } };
     category: string;
   }> = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let pageContent: any = null;
 
   try {
     const sanityCategories = await getGalleryCategories();
@@ -73,9 +75,18 @@ export default async function PortfolioPage() {
     if (sanityFeatured && sanityFeatured.length > 0) {
       featuredImages = sanityFeatured;
     }
+    pageContent = await getPortfolioPageContent();
   } catch {
     // Sanity not configured yet, use fallback data
   }
+
+  const heroSubtitle = pageContent?.heroSubtitle || "Portfolio";
+  const heroTitle = pageContent?.heroTitle || "My Work";
+  const heroDescription = pageContent?.heroDescription || "A collection of real moments, genuine emotions, and beautiful light. Browse by category to see my latest work.";
+  const featuredSubtitle = pageContent?.featuredSubtitle || "Recent Work";
+  const featuredTitle = pageContent?.featuredTitle || "Latest Sessions";
+  const ctaTitle = pageContent?.ctaTitle || "Love What You See?";
+  const ctaDescription = pageContent?.ctaDescription || "Let's create beautiful images together. I'd love to hear about your vision.";
 
   return (
     <>
@@ -83,14 +94,13 @@ export default async function PortfolioPage() {
       <section className="bg-warm-100 py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-warm-500 tracking-[0.3em] uppercase text-sm mb-4">
-            Portfolio
+            {heroSubtitle}
           </p>
           <h1 className="font-heading text-5xl md:text-6xl text-warm-900 mb-6">
-            My Work
+            {heroTitle}
           </h1>
           <p className="text-warm-600 text-lg max-w-2xl mx-auto">
-            A collection of real moments, genuine emotions, and beautiful light.
-            Browse by category to see my latest work.
+            {heroDescription}
           </p>
         </div>
       </section>
@@ -140,10 +150,10 @@ export default async function PortfolioPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <p className="text-sage-600 tracking-[0.3em] uppercase text-sm mb-4">
-              Recent Work
+              {featuredSubtitle}
             </p>
             <h2 className="font-heading text-4xl md:text-5xl text-warm-900 mb-6">
-              Latest Sessions
+              {featuredTitle}
             </h2>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -184,11 +194,10 @@ export default async function PortfolioPage() {
       <section className="py-24 bg-warm-800 text-warm-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="font-heading text-4xl md:text-5xl mb-6">
-            Love What You See?
+            {ctaTitle}
           </h2>
           <p className="text-warm-300 text-lg mb-10">
-            Let&apos;s create beautiful images together. I&apos;d love to hear
-            about your vision.
+            {ctaDescription}
           </p>
           <Link
             href="/booking"

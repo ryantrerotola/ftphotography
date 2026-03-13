@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getAllPosts } from "@/lib/blog";
+import { getBlogPageContent } from "@/sanity/queries";
 
 export const metadata: Metadata = {
   title: "Blog",
@@ -8,8 +9,24 @@ export const metadata: Metadata = {
     "Photography tips, session highlights, and behind-the-scenes stories from Francesca Trerotola Photography in Southern Maine.",
 };
 
-export default function BlogPage() {
+export const dynamic = "force-dynamic";
+
+export default async function BlogPage() {
   const posts = getAllPosts();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let pageContent: any = null;
+
+  try {
+    pageContent = await getBlogPageContent();
+  } catch {
+    // Sanity not configured yet
+  }
+
+  const heroSubtitle = pageContent?.heroSubtitle || "Blog";
+  const heroTitle = pageContent?.heroTitle || "Stories & Tips";
+  const heroDescription = pageContent?.heroDescription || "Session highlights, photography tips, behind-the-scenes moments, and a peek into life as a Maine photographer.";
+  const newsletterTitle = pageContent?.newsletterTitle || "Stay in the Loop";
+  const newsletterDescription = pageContent?.newsletterDescription || "Get photography tips, mini session announcements, and seasonal specials delivered to your inbox.";
 
   return (
     <>
@@ -17,14 +34,13 @@ export default function BlogPage() {
       <section className="bg-warm-100 py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-warm-500 tracking-[0.3em] uppercase text-sm mb-4">
-            Blog
+            {heroSubtitle}
           </p>
           <h1 className="font-heading text-5xl md:text-6xl text-warm-900 mb-6">
-            Stories &amp; Tips
+            {heroTitle}
           </h1>
           <p className="text-warm-600 text-lg max-w-2xl mx-auto">
-            Session highlights, photography tips, behind-the-scenes moments, and
-            a peek into life as a Maine photographer.
+            {heroDescription}
           </p>
         </div>
       </section>
@@ -89,11 +105,10 @@ export default function BlogPage() {
       <section className="py-24 bg-sage-50">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="font-heading text-4xl text-warm-900 mb-6">
-            Stay in the Loop
+            {newsletterTitle}
           </h2>
           <p className="text-warm-600 mb-8">
-            Get photography tips, mini session announcements, and seasonal
-            specials delivered to your inbox.
+            {newsletterDescription}
           </p>
           <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
             <input
