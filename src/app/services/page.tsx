@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getServicesPageContent } from "@/sanity/queries";
+import { getServicesPageContent, getBookingSchedule, getBookingExceptions } from "@/sanity/queries";
+import PackageCards from "./PackageCards";
 
 export const metadata: Metadata = {
   title: "Services & Pricing",
@@ -117,9 +118,20 @@ const fallbackAddOns = [
 export default async function ServicesPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let pageContent: any = null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let schedule: any = null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let exceptions: any[] = [];
 
   try {
-    pageContent = await getServicesPageContent();
+    const results = await Promise.all([
+      getServicesPageContent(),
+      getBookingSchedule(),
+      getBookingExceptions(),
+    ]);
+    pageContent = results[0];
+    schedule = results[1];
+    exceptions = results[2] || [];
   } catch {
     // Sanity not configured yet
   }
@@ -146,6 +158,9 @@ export default async function ServicesPage() {
     ? pageContent.addOns
     : fallbackAddOns;
 
+  const availableDays = (schedule?.availableDays || ["0", "6"]).map(Number);
+  const weeksOut = schedule?.weeksOut || 12;
+
   return (
     <>
       {/* Hero */}
@@ -163,108 +178,18 @@ export default async function ServicesPage() {
         </div>
       </section>
 
-      {/* Portrait packages */}
-      <section className="py-24 bg-warm-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="font-heading text-4xl text-warm-900 mb-4">
-              {portraitSectionTitle}
-            </h2>
-            <p className="text-warm-600">
-              {portraitSectionSubtitle}
-            </p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            {packages.map((pkg: { name: string; price: string; duration: string; description?: string; features: string[]; popular?: boolean }) => (
-              <div
-                key={pkg.name}
-                className={`bg-white p-8 relative ${
-                  pkg.popular ? "ring-2 ring-warm-500 shadow-lg" : ""
-                }`}
-              >
-                {pkg.popular && (
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-warm-500 text-white text-xs tracking-widest uppercase px-4 py-1">
-                    Most Popular
-                  </div>
-                )}
-                <h3 className="font-heading text-2xl text-warm-900 mb-2">
-                  {pkg.name}
-                </h3>
-                <p className="text-warm-500 text-sm mb-2">{pkg.duration}</p>
-                <p className="font-heading text-3xl text-warm-800 mb-4">
-                  {pkg.price}
-                </p>
-                {pkg.description && (
-                  <p className="text-warm-600 text-sm mb-6">{pkg.description}</p>
-                )}
-                <ul className="space-y-3 mb-8">
-                  {(pkg.features || []).map((f: string) => (
-                    <li key={f} className="flex items-start gap-2 text-sm text-warm-700">
-                      <svg className="w-4 h-4 text-sage-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-                <Link
-                  href="/booking"
-                  className={`block text-center py-3 text-sm tracking-widest uppercase transition-colors ${
-                    pkg.popular
-                      ? "bg-warm-700 text-warm-50 hover:bg-warm-800"
-                      : "border border-warm-700 text-warm-700 hover:bg-warm-700 hover:text-warm-50"
-                  }`}
-                >
-                  Book This Package
-                </Link>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Wedding packages */}
-      <section className="py-24 bg-sage-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="font-heading text-4xl text-warm-900 mb-4">
-              {weddingSectionTitle}
-            </h2>
-            <p className="text-warm-600">
-              {weddingSectionSubtitle}
-            </p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            {weddingPackages.map((pkg: { name: string; price: string; duration: string; features: string[] }) => (
-              <div key={pkg.name} className="bg-white p-8">
-                <h3 className="font-heading text-2xl text-warm-900 mb-2">
-                  {pkg.name}
-                </h3>
-                <p className="text-warm-500 text-sm mb-2">{pkg.duration}</p>
-                <p className="font-heading text-3xl text-warm-800 mb-6">
-                  {pkg.price}
-                </p>
-                <ul className="space-y-3 mb-8">
-                  {(pkg.features || []).map((f: string) => (
-                    <li key={f} className="flex items-start gap-2 text-sm text-warm-700">
-                      <svg className="w-4 h-4 text-sage-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-                <Link
-                  href="/contact"
-                  className="block text-center border border-warm-700 text-warm-700 py-3 text-sm tracking-widest uppercase hover:bg-warm-700 hover:text-warm-50 transition-colors"
-                >
-                  Inquire
-                </Link>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Package cards + booking modal */}
+      <PackageCards
+        packages={packages}
+        weddingPackages={weddingPackages}
+        portraitSectionTitle={portraitSectionTitle}
+        portraitSectionSubtitle={portraitSectionSubtitle}
+        weddingSectionTitle={weddingSectionTitle}
+        weddingSectionSubtitle={weddingSectionSubtitle}
+        availableDays={availableDays}
+        weeksOut={weeksOut}
+        exceptions={exceptions}
+      />
 
       {/* Add-ons */}
       <section className="py-24 bg-warm-50">

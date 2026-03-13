@@ -31,13 +31,24 @@ export default function ContactForm({ content }: { content: ContactPageData }) {
 
   useEffect(() => {
     const dateParam = searchParams.get("date");
+    const packageParam = searchParams.get("package");
+    const updates: Partial<typeof formData> = {};
+
     if (dateParam) {
-      const formatted = new Date(dateParam + "T12:00:00").toLocaleDateString(
+      updates.preferredDate = new Date(dateParam + "T12:00:00").toLocaleDateString(
         "en-US",
         { weekday: "long", month: "long", day: "numeric", year: "numeric" }
       );
-      setFormData((prev) => ({ ...prev, preferredDate: formatted }));
     }
+
+    if (packageParam) {
+      updates.message = `I'm interested in the ${packageParam} package.`;
+    }
+
+    if (Object.keys(updates).length > 0) {
+      setFormData((prev) => ({ ...prev, ...updates }));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
 
