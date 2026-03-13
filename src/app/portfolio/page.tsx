@@ -100,8 +100,9 @@ export default async function PortfolioPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {categories.map((cat) => (
-              <div
+              <Link
                 key={cat._id}
+                href={`/lifestyle?category=${cat.slug}`}
                 className="group relative bg-warm-200 aspect-[4/5] flex items-end overflow-hidden cursor-pointer hover:shadow-xl transition-shadow"
               >
                 {cat.coverImage ? (
@@ -128,7 +129,7 @@ export default async function PortfolioPage() {
                   </h3>
                   <p className="text-warm-200 text-sm">{cat.description}</p>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>

@@ -12,7 +12,13 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-export default async function LifestyleGalleryPage() {
+export default async function LifestyleGalleryPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ category?: string }>;
+}) {
+  const { category: activeCategory } = await searchParams;
+
   let images: Array<{
     _id: string;
     title: string;
@@ -29,6 +35,14 @@ export default async function LifestyleGalleryPage() {
     // Sanity not configured yet
   }
 
+  const filtered = activeCategory
+    ? images.filter((img) => img.categorySlug === activeCategory)
+    : images;
+
+  const activeTitle = activeCategory
+    ? categories.find((c) => c.slug === activeCategory)?.title
+    : null;
+
   return (
     <>
       {/* Hero */}
@@ -38,11 +52,10 @@ export default async function LifestyleGalleryPage() {
             Gallery
           </p>
           <h1 className="font-heading text-5xl md:text-6xl text-warm-900 mb-6">
-            Lifestyle Gallery
+            {activeTitle || "Lifestyle Gallery"}
           </h1>
           <p className="text-warm-600 text-lg max-w-2xl mx-auto">
-            Real moments, genuine emotions, and beautiful light — families,
-            engagements, seniors, headshots, and pets.
+            Real moments, genuine emotions, and beautiful light.
           </p>
         </div>
       </section>
@@ -50,26 +63,38 @@ export default async function LifestyleGalleryPage() {
       {/* Gallery */}
       <section className="py-24 bg-warm-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Category filter labels */}
+          {/* Category filter links */}
           {categories.length > 0 && (
             <div className="flex flex-wrap justify-center gap-3 mb-16">
-              <span className="bg-warm-700 text-warm-50 px-5 py-2 text-xs tracking-widest uppercase">
+              <Link
+                href="/lifestyle"
+                className={`px-5 py-2 text-xs tracking-widest uppercase transition-colors ${
+                  !activeCategory
+                    ? "bg-warm-700 text-warm-50"
+                    : "bg-warm-200 text-warm-700 hover:bg-warm-300"
+                }`}
+              >
                 All
-              </span>
+              </Link>
               {categories.map((cat) => (
-                <span
+                <Link
                   key={cat._id}
-                  className="bg-warm-200 text-warm-700 px-5 py-2 text-xs tracking-widest uppercase"
+                  href={`/lifestyle?category=${cat.slug}`}
+                  className={`px-5 py-2 text-xs tracking-widest uppercase transition-colors ${
+                    activeCategory === cat.slug
+                      ? "bg-warm-700 text-warm-50"
+                      : "bg-warm-200 text-warm-700 hover:bg-warm-300"
+                  }`}
                 >
                   {cat.title}
-                </span>
+                </Link>
               ))}
             </div>
           )}
 
-          {images.length > 0 ? (
+          {filtered.length > 0 ? (
             <div className="columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
-              {images.map((img) => (
+              {filtered.map((img) => (
                 <div
                   key={img._id}
                   className="relative break-inside-avoid overflow-hidden group"
@@ -100,9 +125,17 @@ export default async function LifestyleGalleryPage() {
               <svg className="w-16 h-16 mx-auto mb-4 text-warm-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
-              <p className="text-warm-500 text-lg mb-2">Gallery coming soon!</p>
+              <p className="text-warm-500 text-lg mb-2">
+                {activeCategory ? "No photos in this category yet!" : "Gallery coming soon!"}
+              </p>
               <p className="text-warm-400 text-sm">
-                Photos will appear here once they&apos;re uploaded to the CMS.
+                {activeCategory ? (
+                  <Link href="/lifestyle" className="underline hover:text-warm-600">
+                    View all photos
+                  </Link>
+                ) : (
+                  "Photos will appear here once they're uploaded to the CMS."
+                )}
               </p>
             </div>
           )}
