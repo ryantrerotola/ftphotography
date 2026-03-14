@@ -134,7 +134,8 @@ export default async function Home() {
         ) : (
           <div className="absolute inset-0 bg-warm-100" />
         )}
-        {/* Subtle bottom gradient so text is readable without tinting the whole photo */}
+        {/* Top and bottom gradients so nav and text are readable without tinting the whole photo */}
+        <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-black/40 to-transparent" />
         <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/50 to-transparent" />
         <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 text-center">
           <p className="text-warm-100 tracking-[0.4em] uppercase text-sm mb-6 drop-shadow-sm">
