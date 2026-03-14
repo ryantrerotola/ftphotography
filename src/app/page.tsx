@@ -120,8 +120,8 @@ export default async function Home() {
 
   return (
     <>
-      {/* Hero */}
-      <section className="relative min-h-[85vh] flex items-center">
+      {/* Hero — full viewport, extends behind the fixed header */}
+      <section className="relative min-h-screen flex items-center -mt-20">
         {pageContent?.heroImage ? (
           <Image
             src={urlFor(pageContent.heroImage).width(1920).height(1080).url()}
