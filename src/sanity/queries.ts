@@ -83,6 +83,7 @@ export async function getLifestyleCategories() {
 export async function getAboutContent() {
   return client.fetch(`
     *[_type == "aboutPage"][0] {
+      heroImage,
       headshot,
       homePhoto,
       bio,
@@ -128,6 +129,7 @@ export async function getHomePageContent() {
 export async function getServicesPageContent() {
   return client.fetch(`
     *[_type == "servicesPage"][0] {
+      heroImage,
       heroSubtitle,
       heroTitle,
       heroDescription,
@@ -171,6 +173,7 @@ export async function getBookingExceptions() {
 export async function getBookingPageContent() {
   return client.fetch(`
     *[_type == "bookingPage"][0] {
+      heroImage,
       heroSubtitle,
       heroTitle,
       heroDescription,
@@ -188,6 +191,7 @@ export async function getBookingPageContent() {
 export async function getContactPageContent() {
   return client.fetch(`
     *[_type == "contactPage"][0] {
+      heroImage,
       heroSubtitle,
       heroTitle,
       heroDescription,
@@ -206,6 +210,7 @@ export async function getContactPageContent() {
 export async function getPortfolioPageContent() {
   return client.fetch(`
     *[_type == "portfolioPage"][0] {
+      heroImage,
       heroSubtitle,
       heroTitle,
       heroDescription,
@@ -221,6 +226,7 @@ export async function getPortfolioPageContent() {
 export async function getBlogPageContent() {
   return client.fetch(`
     *[_type == "blogPage"][0] {
+      heroImage,
       heroSubtitle,
       heroTitle,
       heroDescription,

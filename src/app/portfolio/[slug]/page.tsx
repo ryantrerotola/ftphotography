@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getGalleryImagesByCategory, getGalleryCategories } from "@/sanity/queries";
 import { urlFor } from "@/sanity/image";
+import HeroBanner from "@/components/HeroBanner";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +14,8 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  let categories: Array<{ _id: string; title: string; slug: string; description: string }> = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let categories: Array<{ _id: string; title: string; slug: string; description: string; coverImage?: any }> = [];
 
   try {
     categories = (await getGalleryCategories()) || [];
@@ -39,7 +41,8 @@ export default async function CategoryGalleryPage({
 }) {
   const { slug } = await params;
 
-  let categories: Array<{ _id: string; title: string; slug: string; description: string }> = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let categories: Array<{ _id: string; title: string; slug: string; description: string; coverImage?: any }> = [];
   let images: Array<{ _id: string; title: string; image: any; date: string }> = [];
 
   try {
@@ -56,22 +59,12 @@ export default async function CategoryGalleryPage({
 
   return (
     <>
-      {/* Hero */}
-      <section className="bg-warm-100 py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-warm-500 tracking-[0.3em] uppercase text-sm mb-4">
-            <Link href="/portfolio" className="hover:text-warm-700 transition-colors">
-              Portfolio
-            </Link>
-          </p>
-          <h1 className="font-heading text-5xl md:text-6xl text-warm-900 mb-6">
-            {category.title}
-          </h1>
-          <p className="text-warm-600 text-lg max-w-2xl mx-auto">
-            {category.description}
-          </p>
-        </div>
-      </section>
+      <HeroBanner
+        image={category.coverImage}
+        subtitle="Portfolio"
+        title={category.title}
+        description={category.description}
+      />
 
       {/* Gallery grid */}
       <section className="py-24 bg-warm-50">

@@ -6,6 +6,12 @@ export const aboutPage = defineType({
   type: "document",
   fields: [
     defineField({
+      name: "heroImage",
+      title: "Hero Background Image",
+      type: "image",
+      options: { hotspot: true },
+    }),
+    defineField({
       name: "headshot",
       title: "Headshot",
       type: "image",

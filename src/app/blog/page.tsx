@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getAllPosts } from "@/lib/blog";
 import { getBlogPageContent } from "@/sanity/queries";
+import HeroBanner from "@/components/HeroBanner";
 
 export const metadata: Metadata = {
   title: "Blog",
@@ -30,20 +31,12 @@ export default async function BlogPage() {
 
   return (
     <>
-      {/* Hero */}
-      <section className="bg-warm-100 py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-warm-500 tracking-[0.3em] uppercase text-sm mb-4">
-            {heroSubtitle}
-          </p>
-          <h1 className="font-heading text-5xl md:text-6xl text-warm-900 mb-6">
-            {heroTitle}
-          </h1>
-          <p className="text-warm-600 text-lg max-w-2xl mx-auto">
-            {heroDescription}
-          </p>
-        </div>
-      </section>
+      <HeroBanner
+        image={pageContent?.heroImage}
+        subtitle={heroSubtitle}
+        title={heroTitle}
+        description={heroDescription}
+      />
 
       {/* Blog grid */}
       <section className="py-24 bg-warm-50">

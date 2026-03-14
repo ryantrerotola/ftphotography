@@ -84,21 +84,6 @@ export default function ContactForm({ content }: { content: ContactPageData }) {
 
   return (
     <>
-      {/* Hero */}
-      <section className="bg-warm-100 py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-warm-500 tracking-[0.3em] uppercase text-sm mb-4">
-            {content.heroSubtitle}
-          </p>
-          <h1 className="font-heading text-5xl md:text-6xl text-warm-900 mb-6">
-            {content.heroTitle}
-          </h1>
-          <p className="text-warm-600 text-lg max-w-2xl mx-auto">
-            {content.heroDescription}
-          </p>
-        </div>
-      </section>
-
       {/* Contact form */}
       <section className="py-24 bg-warm-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">

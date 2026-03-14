@@ -1,5 +1,6 @@
 import { getContactPageContent } from "@/sanity/queries";
 import ContactForm from "./ContactForm";
+import HeroBanner from "@/components/HeroBanner";
 
 export const dynamic = "force-dynamic";
 
@@ -26,5 +27,15 @@ export default async function ContactPage() {
     successMessage: pageContent?.successMessage || "Your message has been sent. I'll be in touch within 24 hours. In the meantime, feel free to browse my portfolio!",
   };
 
-  return <ContactForm content={content} />;
+  return (
+    <>
+      <HeroBanner
+        image={pageContent?.heroImage}
+        subtitle={content.heroSubtitle}
+        title={content.heroTitle}
+        description={content.heroDescription}
+      />
+      <ContactForm content={content} />
+    </>
+  );
 }
