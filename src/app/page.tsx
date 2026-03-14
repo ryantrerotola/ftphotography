@@ -121,7 +121,7 @@ export default async function Home() {
   return (
     <>
       {/* Hero — full viewport, extends behind the fixed header */}
-      <section className="relative min-h-screen flex items-center -mt-20">
+      <section className="relative min-h-screen flex items-end -mt-20">
         {pageContent?.heroImage ? (
           <Image
             src={urlFor(pageContent.heroImage).width(1920).height(1080).url()}
@@ -134,8 +134,9 @@ export default async function Home() {
         ) : (
           <div className="absolute inset-0 bg-warm-100" />
         )}
-        <div className="absolute inset-0 bg-warm-900/40" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
+        {/* Subtle bottom gradient so text is readable without tinting the whole photo */}
+        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/50 to-transparent" />
+        <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 text-center">
           <p className="text-warm-100 tracking-[0.4em] uppercase text-sm mb-6 drop-shadow-sm">
             {heroSubtitle}
           </p>
