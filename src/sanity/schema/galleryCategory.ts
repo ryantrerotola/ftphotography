@@ -42,20 +42,13 @@ export const galleryCategory = defineType({
       title: "Photos",
       type: "array",
       description:
-        "Drag and drop to reorder. Click the + button to upload new photos.",
+        "Drag and drop to reorder. Select multiple files when uploading to bulk-add photos.",
       of: [
         defineArrayMember({
-          type: "object",
-          name: "galleryPhoto",
+          type: "image",
           title: "Photo",
+          options: { hotspot: true },
           fields: [
-            defineField({
-              name: "image",
-              title: "Image",
-              type: "image",
-              options: { hotspot: true },
-              validation: (rule) => rule.required(),
-            }),
             defineField({
               name: "title",
               title: "Title",
@@ -81,20 +74,6 @@ export const galleryCategory = defineType({
               type: "date",
             }),
           ],
-          preview: {
-            select: {
-              title: "title",
-              media: "image",
-              featured: "featured",
-            },
-            prepare({ title, media, featured }) {
-              return {
-                title: title || "Untitled photo",
-                subtitle: featured ? "Featured" : undefined,
-                media,
-              };
-            },
-          },
         }),
       ],
     }),

@@ -22,7 +22,7 @@ export async function getGalleryImagesByCategory(categorySlug: string) {
       _key,
       title,
       alt,
-      image,
+      "image": { "asset": asset, "hotspot": hotspot, "crop": crop },
       date
     }
   `,
@@ -38,7 +38,7 @@ export async function getFeaturedImages() {
       "items": images[featured == true] {
         _key,
         title,
-        image,
+        "image": { "asset": asset, "hotspot": hotspot, "crop": crop },
         "category": ^.title
       }
     }.items[] | [0...8]
@@ -68,7 +68,7 @@ export async function getLifestyleImages() {
       "items": images[] {
         _key,
         title,
-        image,
+        "image": { "asset": asset, "hotspot": hotspot, "crop": crop },
         "category": ^.title,
         "categorySlug": ^.slug.current
       }

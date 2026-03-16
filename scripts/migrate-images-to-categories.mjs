@@ -94,8 +94,10 @@ async function migrate() {
 
     const arrayItems = catImages.map((img) => ({
       _key: randomUUID().replace(/-/g, "").slice(0, 12),
-      _type: "galleryPhoto",
-      image: img.image,
+      _type: "image",
+      asset: img.image?.asset,
+      hotspot: img.image?.hotspot,
+      crop: img.image?.crop,
       title: img.title || undefined,
       featured: img.featured || false,
       date: img.date || undefined,
