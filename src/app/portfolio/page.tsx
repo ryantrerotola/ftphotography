@@ -59,7 +59,7 @@ export const dynamic = "force-dynamic";
 export default async function PortfolioPage() {
   let categories = fallbackCategories;
   let featuredImages: Array<{
-    _id: string;
+    _key: string;
     title: string;
     image: { asset: { _ref: string } };
     category: string;
@@ -153,7 +153,7 @@ export default async function PortfolioPage() {
             {featuredImages.length > 0
               ? featuredImages.map((img, i) => (
                   <div
-                    key={img._id}
+                    key={img._key}
                     className={`relative bg-warm-200 ${
                       i % 3 === 0 ? "aspect-[3/4]" : "aspect-square"
                     } overflow-hidden`}

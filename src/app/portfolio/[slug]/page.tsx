@@ -43,7 +43,7 @@ export default async function CategoryGalleryPage({
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let categories: Array<{ _id: string; title: string; slug: string; description: string; coverImage?: any }> = [];
-  let images: Array<{ _id: string; title: string; image: any; date: string }> = [];
+  let images: Array<{ _key: string; title: string; alt: string; image: any; date: string }> = [];
 
   try {
     categories = (await getGalleryCategories()) || [];
@@ -73,12 +73,12 @@ export default async function CategoryGalleryPage({
             <div className="columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
               {images.map((img) => (
                 <div
-                  key={img._id}
+                  key={img._key}
                   className="relative break-inside-avoid overflow-hidden group"
                 >
                   <Image
                     src={urlFor(img.image).width(600).url()}
-                    alt={img.title || `${category.title} photography`}
+                    alt={img.alt || img.title || `${category.title} photography`}
                     width={600}
                     height={800}
                     className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-500"

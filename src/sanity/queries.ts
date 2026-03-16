@@ -9,18 +9,19 @@ export async function getGalleryCategories() {
       "slug": slug.current,
       description,
       coverImage,
-      "count": count(*[_type == "galleryImage" && references(^._id)])
+      "count": count(images)
     }
   `);
 }
 
-// Gallery images by category slug
+// Gallery images by category slug (reads from embedded array)
 export async function getGalleryImagesByCategory(categorySlug: string) {
   return client.fetch(
     `
-    *[_type == "galleryImage" && category->slug.current == $categorySlug] | order(order asc, date desc) {
-      _id,
+    *[_type == "galleryCategory" && slug.current == $categorySlug][0].images[] {
+      _key,
       title,
+      alt,
       image,
       date
     }
@@ -29,15 +30,18 @@ export async function getGalleryImagesByCategory(categorySlug: string) {
   );
 }
 
-// Featured gallery images
+// Featured gallery images (across all categories)
 export async function getFeaturedImages() {
   return client.fetch(`
-    *[_type == "galleryImage" && featured == true] | order(order asc, date desc) [0...8] {
-      _id,
-      title,
-      image,
-      "category": category->title
-    }
+    *[_type == "galleryCategory"] | order(order asc) {
+      "categoryTitle": title,
+      "items": images[featured == true] {
+        _key,
+        title,
+        image,
+        "category": ^.title
+      }
+    }.items[] | [0...8]
   `);
 }
 
@@ -58,13 +62,17 @@ export async function getTestimonials() {
 // Lifestyle gallery images (all categories except weddings)
 export async function getLifestyleImages() {
   return client.fetch(`
-    *[_type == "galleryImage" && category->slug.current != "weddings"] | order(order asc, date desc) {
-      _id,
-      title,
-      image,
-      "category": category->title,
-      "categorySlug": category->slug.current
-    }
+    *[_type == "galleryCategory" && slug.current != "weddings"] | order(order asc) {
+      "categoryTitle": title,
+      "categorySlug": slug.current,
+      "items": images[] {
+        _key,
+        title,
+        image,
+        "category": ^.title,
+        "categorySlug": ^.slug.current
+      }
+    }.items[]
   `);
 }
 

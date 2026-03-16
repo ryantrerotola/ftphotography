@@ -1,4 +1,4 @@
-import { defineField, defineType } from "sanity";
+import { defineField, defineType, defineArrayMember } from "sanity";
 
 export const galleryCategory = defineType({
   name: "galleryCategory",
@@ -35,7 +35,68 @@ export const galleryCategory = defineType({
       name: "order",
       title: "Display Order",
       type: "number",
-      description: "Lower numbers appear first",
+      description: "Lower numbers appear first on the portfolio page",
+    }),
+    defineField({
+      name: "images",
+      title: "Photos",
+      type: "array",
+      description:
+        "Drag and drop to reorder. Click the + button to upload new photos.",
+      of: [
+        defineArrayMember({
+          type: "object",
+          name: "galleryPhoto",
+          title: "Photo",
+          fields: [
+            defineField({
+              name: "image",
+              title: "Image",
+              type: "image",
+              options: { hotspot: true },
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: "title",
+              title: "Title",
+              type: "string",
+            }),
+            defineField({
+              name: "alt",
+              title: "Alt Text",
+              type: "string",
+              description: "Describe the image for accessibility",
+            }),
+            defineField({
+              name: "featured",
+              title: "Featured",
+              type: "boolean",
+              description:
+                "Show this photo in the featured gallery on the portfolio page",
+              initialValue: false,
+            }),
+            defineField({
+              name: "date",
+              title: "Date",
+              type: "date",
+            }),
+          ],
+          preview: {
+            select: {
+              title: "title",
+              media: "image",
+              featured: "featured",
+            },
+            prepare({ title, media, featured }) {
+              return {
+                title: title || "Untitled photo",
+                subtitle: featured ? "Featured" : undefined,
+                media,
+              };
+            },
+          },
+        }),
+      ],
     }),
   ],
   orderings: [
