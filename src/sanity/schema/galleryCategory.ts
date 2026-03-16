@@ -55,12 +55,6 @@ export const galleryCategory = defineType({
               type: "string",
             }),
             defineField({
-              name: "alt",
-              title: "Alt Text",
-              type: "string",
-              description: "Describe the image for accessibility",
-            }),
-            defineField({
               name: "featured",
               title: "Featured",
               type: "boolean",

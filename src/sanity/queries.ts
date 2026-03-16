@@ -21,7 +21,6 @@ export async function getGalleryImagesByCategory(categorySlug: string) {
     *[_type == "galleryCategory" && slug.current == $categorySlug][0].images[] {
       _key,
       title,
-      alt,
       "image": { "asset": asset, "hotspot": hotspot, "crop": crop },
       date
     }
