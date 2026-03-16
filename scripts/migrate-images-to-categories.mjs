@@ -17,6 +17,9 @@
  * Run WITHOUT --delete first to verify, then re-run WITH --delete to clean up.
  */
 
+import dotenv from "dotenv";
+dotenv.config({ path: ".env.local" });
+
 import { createClient } from "@sanity/client";
 import { randomUUID } from "crypto";
 
